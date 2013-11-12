@@ -17,13 +17,13 @@ def sub_search(txt,pat,q):
   hashtxt = 0
   hashtxt2 = 0
   h = 1
-  h2 = 1 
+  h2 = 1
   tuple_array = []
 
   for i in range(0,patlen-1):
 	#  print "creating h\n"
 	  h = (h*d)%q
-  	  h2 = (h2*d)%q2 
+  	  h2 = (h2*d)%q2
   for i in range(0,patlen):
 	#  print "creating hash values\n"
 	  hashpat = (d*hashpat + ord(pat[i]))%q
@@ -36,7 +36,7 @@ def sub_search(txt,pat,q):
 	  # check all the letters if the hashes match
 	  if (hashpat == hashtxt):
 	#	  print "hashes are equal\n"
-	#	  double hashin 
+	#	  double hashin
 	#	if(hashpat2==hashtxt2):
 	#		tuple_array.append((i,txt[i:i+patlen]))
 	#		print "pattern found at index %d" %i
@@ -45,7 +45,7 @@ def sub_search(txt,pat,q):
 			  if (txt[i+j] != pat[j]):
 				break
 		 	  if j == patlen-1:
-			  	print "pattern found at index %d" %i 
+			  	print "pattern found at index %d" %i
 				print "pattern: %s" %txt[i:i+patlen]
 		#		return
 
@@ -59,20 +59,20 @@ def sub_search(txt,pat,q):
 		hashtxt2 = hashtxt2 + q2
 
 def full_search(txt,pat,q,patsize):
-  
+
   splitpat = splitCount(pat,patsize)
 
   for subpat in range(0,len(splitpat)):
-	  sub_search(txt,splitpat[subpat],q) 
+	  sub_search(txt,splitpat[subpat],q)
 
 if __name__ == '__main__':
 
-  datatxt, pattxt = sys.argv[1:] 
+  datatxt, pattxt = sys.argv[1:]
   with open (datatxt, "r") as txtfile:
-	  txt=txtfile.read().replace('\n', '')
+	  txt=txtfile.read().replace('\n', ' ') # replace newline with space
   with open (pattxt,"r") as patfile:
-	  pat=patfile.read().replace('\n','') 
-  txt = txt.upper() 
+	  pat=patfile.read().replace('\n',' ')
+  txt = txt.upper()
   pat = pat.upper()
   #txt = "my name is bob"
   #pat = "name is"
