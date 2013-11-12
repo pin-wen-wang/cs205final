@@ -13,6 +13,7 @@ The file with line numbers should then be hashed with MRhash.py:
 #import subprocess as sp
 import itertools
 
+# from http://stackoverflow.com/questions/1624883/alternative-way-to-split-a-list-into-groups-of-n
 def grouper(n, iterable, fillvalue=None):
     "grouper(3, 'ABCDEFG', 'x') --> ABC DEF Gxx"
     args = [iter(iterable)] * n
@@ -46,7 +47,7 @@ for i, chunk in enumerate(text3):
     fout.write("%s\n" % (' '.join(chunk)))
 
 
-# CANNOT GET THIS TO WORK BECAUSE OF THE QUOTES - \n gets interpreted literally at command line
+# Cannot get this to work because of quotes - \n gets interpreted literally at command line
 ### Add line numbers to each line
 #lineNumCommand = '''awk '{printf("%5d : %s\n", NR,$0)}' ''' + textReshaped + ''' > ''' + finaltext
 #lineNumCommand = 'awk '{printf("%5d : %s\n", NR,$0)}' textReshaped > finaltext'
