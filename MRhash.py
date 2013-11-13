@@ -35,7 +35,7 @@ d = 26 # number of letters in alphabet
 
 # Hash function
 def letsHash(pat,q,d):
-
+    #print pat
     patlen = len(pat)
     hashpat = 0
 
@@ -84,7 +84,7 @@ class processText(MRJob):
         sortedVals = sorted(list(values), key=operator.itemgetter(0))
         hashVals = [val[1] for val in sortedVals]
 
-        yield int(lineNum), hashVals
+        yield (int(lineNum), hashVals)
         # i think 0 is no text
 
 

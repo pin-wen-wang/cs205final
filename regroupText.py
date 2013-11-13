@@ -19,45 +19,51 @@ def grouper(n, iterable, fillvalue=None):
     args = [iter(iterable)] * n
     return itertools.izip_longest(*args, fillvalue=fillvalue)
 
-# NAME OF INPUT TEXT
-intext = 'Frankenstein.txt'
 
-# NAME OF TEXT GROUPED INTO 20 WORDS A LINE
-textReshaped = 'FrankensteinReshaped.txt'
-
-# NAME OF OUTPUT TEXT WITH LINE NUMBERS
-#finaltext = 'FrankensteinWithNum.txt'
-
-# NAME OF FILE WITH HASHED TEXT
-#hashedtext = 'FrankensteinHashed.txt'
+if __name__ == '__main__':
 
 
+  # NAME OF INPUT TEXT
+  intext = 'Frankenstein.txt'
 
-### Reshape text (20 words per line)
-F = open(intext)
-text=F.read()
-words = text.split()
+  # NAME OF TEXT GROUPED INTO 20 WORDS A LINE
+  textReshaped = 'FrankensteinReshaped.txt'
 
-# creates tuples of number of words to group by.
-grouped = grouper(20, words, "")
-text3 = list(grouped)
+  # NAME OF OUTPUT TEXT WITH LINE NUMBERS
+  #finaltext = 'FrankensteinWithNum.txt'
 
-fout = open(textReshaped, 'w')
-for i, chunk in enumerate(text3):
-    fout.write("%s\n" % (' '.join(chunk)))
+  # NAME OF FILE WITH HASHED TEXT
+  #hashedtext = 'FrankensteinHashed.txt'
 
 
-# Cannot get this to work because of quotes - \n gets interpreted literally at command line
-### Add line numbers to each line
-#lineNumCommand = '''awk '{printf("%5d : %s\n", NR,$0)}' ''' + textReshaped + ''' > ''' + finaltext
-#lineNumCommand = 'awk '{printf("%5d : %s\n", NR,$0)}' textReshaped > finaltext'
-#print lineNumCommand
-#returnCode = sp.call(lineNumCommand, shell=True)
+
+  ### Reshape text (20 words per line)
+  F = open(intext)
+  text=F.read()
+  F.close()
+  words = text.split()
+
+  # creates tuples of number of words to group by.
+  grouped = grouper(20, words, "")
+  text3 = list(grouped)
+
+  fout = open(textReshaped, 'w')
+  for i, chunk in enumerate(text3):
+      fout.write("%s\n" % (' '.join(chunk)))
+  fout.close()
 
 
-### Hash each line with MR code
-#hashCommand = 'python MRhash.py < ' + finaltext + ' > ' + hashedtext
-#returnCode = sp.call(hashCommand, shell=True)
+  # Cannot get this to work because of quotes - \n gets interpreted literally at command line
+  ### Add line numbers to each line
+  #lineNumCommand = '''awk '{printf("%5d : %s\n", NR,$0)}' ''' + textReshaped + ''' > ''' + finaltext
+  #lineNumCommand = 'awk '{printf("%5d : %s\n", NR,$0)}' textReshaped > finaltext'
+  #print lineNumCommand
+  #returnCode = sp.call(lineNumCommand, shell=True)
+
+
+  ### Hash each line with MR code
+  #hashCommand = 'python MRhash.py < ' + finaltext + ' > ' + hashedtext
+  #returnCode = sp.call(hashCommand, shell=True)
 
 
 
