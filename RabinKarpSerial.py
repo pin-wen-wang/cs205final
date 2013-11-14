@@ -1,6 +1,7 @@
 #########################################
 # http://www.geeksforgeeks.org/searching-for-patterns-set-3-rabin-karp-algorithm#/
 # serial Rabin Karp algorithm
+# currently runs by : python RabinKarpSerial.py Frankenstein.txt pattern2.txt
 #########################################
 import sys
 d = 26 # number of characters in input alphabet?
@@ -8,7 +9,7 @@ d = 26 # number of characters in input alphabet?
 def splitCount(s, count):
 	return[s[i:i+count] for i in range(0,len(s),count)]
 
-def sub_search(txt,pat,q):
+def sub_search(txt,pat,q,filename):
 
   patlen = len(pat)
   txtlen = len(txt)
@@ -45,7 +46,7 @@ def sub_search(txt,pat,q):
 			  if (txt[i+j] != pat[j]):
 				break
 		 	  if j == patlen-1:
-			  	print "pattern found at index %d" %i
+			  	print "pattern found at index %d in text: %s" %(i,filename)
 				print "pattern: %s" %txt[i:i+patlen]
 		#		return
 
@@ -58,26 +59,34 @@ def sub_search(txt,pat,q):
 	    if (hashtxt2 < 0):
 		hashtxt2 = hashtxt2 + q2
 
-def full_search(txt,pat,q,patsize):
+def full_search(txt,pat,q,patsize,filename):
 
   splitpat = splitCount(pat,patsize)
 
   for subpat in range(0,len(splitpat)):
-	  sub_search(txt,splitpat[subpat],q)
+	  sub_search(txt,splitpat[subpat],q,filename)
 
 if __name__ == '__main__':
 
-  datatxt, pattxt = sys.argv[1:]
-  with open (datatxt, "r") as txtfile:
-	  txt=txtfile.read().replace('\n', ' ') # replace newline with space
-  with open (pattxt,"r") as patfile:
-	  pat=patfile.read().replace('\n',' ')
-  txt = txt.upper()
-  pat = pat.upper()
-  #txt = "my name is bob"
-  #pat = "name is"
-  q = 1079
-  q2 = 1011
-  patsize = 100;
+	q = 1079
+	q2 = 1011
+	patsize = 100;
+	
+	# opening many files
 
-  full_search(txt,pat,q,patsize)
+	filenames, pattxt = sys.argv[1:]
+	with open (pattxt,"r") as patfile:
+		pat=patfile.read().replace('\n',' ')
+
+	pat = pat.upper()
+
+	files = open(filenames).readlines()
+	for i in files:
+		filename = i.replace('\n','')
+		with open (filename,"r") as txt:
+			txt = txt.read().replace('\n',' ')
+		
+		txt = txt.upper()
+
+		full_search(txt,pat,q,patsize,filename)
+
