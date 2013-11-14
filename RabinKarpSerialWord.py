@@ -3,10 +3,30 @@
 # serial Rabin Karp algorithm
 #########################################
 import sys
+import string
+from itertools import count, groupby
 d = 26 # number of characters in input alphabet?
 
-def splitCount(s, count):
-	return[s[i:i+count] for i in range(0,len(s),count)]
+def preprocesspat(pat):
+	exclude = set(string.punctuation)
+	patarray = pat.split()
+	for index,word in enumerate(patarray):
+		patarray[index] = ''.join(ch.upper() for ch in word if ch not in exclude)
+	return patarray
+
+def preprocesstxt(txt):
+	exclude = set(string.punctuation)
+	return ''.join(ch.upper() for ch in txt if txt not in exclude)
+
+def splitCount(s,step):
+	c=count()
+	return[' '.join(g) for k, g in groupby(s, lambda i: c.next() // step) ]
+
+def word_hash(word,q):
+	x = 0;
+	for i in range(len(word)):
+	  x = (d*x + ord(word[i]))%q
+	return x 
 
 def sub_search(txt,pat,q):
 
@@ -26,17 +46,17 @@ def sub_search(txt,pat,q):
   	  h2 = (h2*d)%q2
   for i in range(0,patlen):
 	#  print "creating hash values\n"
-	  hashpat = (d*hashpat + ord(pat[i]))%q
-          hashpat2 = (d*hashpat2 + ord(pat[i]))%q2
-	  hashtxt = (d*hashtxt + ord(txt[i]))%q
-          hashtxt2 = (d*hashtxt2 + ord(txt[i]))%q2
+	  hashpat = (d*hashpat + word_hash(pat[i],q))%q
+          hashpat2 = (d*hashpat2 + word_hash(pat[i],q2))%q2
+	  hashtxt = (d*hashtxt + word_hash(txt[i],q))%q
+          hashtxt2 = (d*hashtxt2 + word_hash(txt[i],q2))%q2
 
   for i in range(0,txtlen-patlen+1):
 	#  print "running through txt\n"
 	  # check all the letters if the hashes match
 	  if (hashpat == hashtxt):
 	#	  print "hashes are equal\n"
-	#	  double hashin
+	#	  double hashing
 	#	if(hashpat2==hashtxt2):
 	#		tuple_array.append((i,txt[i:i+patlen]))
 	#		print "pattern found at index %d" %i
@@ -51,12 +71,13 @@ def sub_search(txt,pat,q):
 
 	  if (i < txtlen-patlen):
 	#   print "shifting pat in txt\n"
-	    hashtxt = (d*(hashtxt - ord(txt[i])*h) + ord(txt[i+patlen]))%q
-	    hashtxt2 = (d*(hashtxt2 - ord(txt[i])*h2) + ord(txt[i+patlen]))%q2
+	    hashtxt = (d*(hashtxt - word_hash(txt[i],q2)*h) + word_hash(txt[i+patlen],q))%q
+	    hashtxt2 = (d*(hashtxt2 - word_hash(txt[i],q2)*h2) + word_hash(txt[i+patlen],q2))%q2
 	    if (hashtxt < 0):
 		hashtxt = hashtxt + q
 	    if (hashtxt2 < 0):
-		hashtxt2 = hashtxt2 + q2
+		hashtxt2 = hashtxt2 + q2 
+
 
 def full_search(txt,pat,q,patsize):
 
@@ -72,12 +93,14 @@ if __name__ == '__main__':
 	  txt=txtfile.read().replace('\n', ' ') # replace newline with space
   with open (pattxt,"r") as patfile:
 	  pat=patfile.read().replace('\n',' ')
-  txt = txt.upper()
-  pat = pat.upper()
+
+  txt = preprocesstxt(txt)
+  pat = preprocesspat(pat)
+  
   #txt = "my name is bob"
   #pat = "name is"
   q = 1079
   q2 = 1011
-  patsize = 100;
+  patsize = 20; #20 words
 
   full_search(txt,pat,q,patsize)
