@@ -1,7 +1,7 @@
 #########################################
 # http://www.geeksforgeeks.org/searching-for-patterns-set-3-rabin-karp-algorithm#/
 # serial Rabin Karp algorithm
-# currently runs by : python RabinKarpSerial.py Frankenstein.txt pattern2.txt
+# currently runs by : python RabinKarpSerial.py filenames.txt pattern2.txt
 #########################################
 import sys
 d = 26 # number of characters in input alphabet?
@@ -86,7 +86,7 @@ if __name__ == '__main__':
 		with open (filename,"r") as txt:
 			txt = txt.read().replace('\n',' ')
 		
-		txt = txt.upper()
+		txt = txt.upper()gi
 
 		full_search(txt,pat,q,patsize,filename)
 
