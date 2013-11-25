@@ -122,7 +122,7 @@ if rank == 0:
 
 	status = MPI.Status()
 	
-	for i in xrange(1,size):
+	for i in xrange(0,size):
 		recv_result = comm.recv(source=i,tag=MPI.ANY_TAG)
 		start = int(round((i*(txtlen-patlen+1)/size)))
 
