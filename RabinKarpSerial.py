@@ -3,6 +3,7 @@
 # serial Rabin Karp algorithm
 # currently runs by : python RabinKarpSerial.py filenames.txt pattern2.txt
 #########################################
+import string
 import sys
 d = 26 # number of characters in input alphabet?
 
@@ -38,10 +39,10 @@ def sub_search(txt,pat,q,filename):
 	  if (hashpat == hashtxt):
 	#	  print "hashes are equal\n"
 	#	  double hashin
-	#	if(hashpat2==hashtxt2):
-	#		tuple_array.append((i,txt[i:i+patlen]))
-	#		print "pattern found at index %d" %i
-	#		print "pattern %s" %txt[i:i+patlen]
+#		if(hashpat2==hashtxt2):
+#			tuple_array.append((i,txt[i:i+patlen]))
+#			print "pattern found at index %d" %i
+#			print "pattern %s" %txt[i:i+patlen]
 		  for j in range (0,patlen):
 			  if (txt[i+j] != pat[j]):
 				break
@@ -66,6 +67,10 @@ def full_search(txt,pat,q,patsize,filename):
   for subpat in range(0,len(splitpat)):
 	  sub_search(txt,splitpat[subpat],q,filename)
 
+def prep_text(text):
+  exclude = set(string.punctuation)
+  return ''.join(x.upper() for x in text if x not in exclude)
+
 if __name__ == '__main__':
 
 	q = 1079
@@ -78,7 +83,8 @@ if __name__ == '__main__':
 	with open (pattxt,"r") as patfile:
 		pat=patfile.read().replace('\n',' ')
 
-	pat = pat.upper()
+	#gets rid of all punctuation
+	pat = prep_text(pat)
 
 	files = open(filenames).readlines()
 	for i in files:
@@ -86,7 +92,7 @@ if __name__ == '__main__':
 		with open (filename,"r") as txt:
 			txt = txt.read().replace('\n',' ')
 		
-		txt = txt.upper()gi
+		txt = prep_text(txt)
 
 		full_search(txt,pat,q,patsize,filename)
 
