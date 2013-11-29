@@ -3,6 +3,7 @@
 # serial Rabin Karp algorithm
 # currently runs by : python RabinKarpSerial.py filenames.txt pattern2.txt
 #########################################
+import time
 import string
 import sys
 d = 26 # number of characters in input alphabet?
@@ -13,6 +14,7 @@ def splitCount(s, count):
 def sub_search(txt,pat,q,filename):
 
   patlen = len(pat)
+  #print pat
   txtlen = len(txt)
   hashpat = 0
   hashpat2 = 0
@@ -86,6 +88,7 @@ if __name__ == '__main__':
 	#gets rid of all punctuation
 	pat = prep_text(pat)
 
+	start = time.time()
 	files = open(filenames).readlines()
 	for i in files:
 		filename = i.replace('\n','')
@@ -95,4 +98,5 @@ if __name__ == '__main__':
 		txt = prep_text(txt)
 
 		full_search(txt,pat,q,patsize,filename)
-
+	end = time.time()
+	print "Time: %f sec" %(end-start)
