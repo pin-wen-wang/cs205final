@@ -13,7 +13,7 @@ Output: prints to screen the matches found
 To do:
 --check matches to ensure that the hash found a true match.
 --fix the incorrect output when pattern has repeated chunks
---make processData faster so that it can append exisiting full chunks of texts rather than one word at a time
+--make processMatches smarter so that it can append exisiting full chunks of texts rather than one word at a time
 
 """
 
@@ -69,10 +69,11 @@ def processData(hashedData, pat, m, rank, comm):
 
   processMatches(matches,m) # print out matches
 
+########
 
 
 
-
+########
 def processMatches(matches,m):
 
   # data frame with tuple number and associated text
@@ -100,10 +101,9 @@ def processMatches(matches,m):
     print 'Match found of length ', numFullQuotes, ' chunks (defined by m)'
     print ' '.join(matchedTxt)
 
-
-
-
 ########
+
+
 
 
 
@@ -112,7 +112,7 @@ if __name__ == '__main__':
   size = comm.Get_size()
   rank = comm.Get_rank()
 
-  m = 10 # pattern size!!
+  m = 10 # pattern size (unit: words)
 
   hashedtxt, pattxt = sys.argv[1:]
 
@@ -132,8 +132,6 @@ if __name__ == '__main__':
     assert int(processNum) == rank
 
     hashedLine = [int(x) for x in data[:-2].split(", ")] # don't include ] \n in data
-    #hashedData.append((rank, hashedLine)) # create list of these tuples
-    #print hashedData
 
     start_time = MPI.Wtime()
     processData(hashedLine, pat, m, rank, comm)
