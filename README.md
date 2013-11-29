@@ -21,16 +21,16 @@ We explore different methods of parallelizing the Rabin-Karp algorithm and will 
 ###Approaches: ###
 There are a number of approaches to parallelizing the Rabin-Karp algorithm that we will design and analyze. We can divide the corpus of texts, and/or the pattern among processes and run the algorithm on the corpus in real-time (with the rolling hash) or preprocessed. Inspired by the original Rabin-Karp algorithm, we implement the serial and parallel versions as well as attempt our own parallel version using prehashed corpuses.
 
-*Takes the Rabin-Karp algorithm and parallelizes the rolling hash using MPI. 
+* Takes the Rabin-Karp algorithm and parallelizes the rolling hash using MPI. 
 
-*Prehash the corpus of texts that will be searched through by hashing each word using MapReduce, and search on the pre-processed corpus of texts for patterns.
+* Prehash the corpus of texts that will be searched through by hashing each word using MapReduce, and search on the pre-processed corpus of texts for patterns.
 
 
 ### Dependencies: ###
 
-*MapReduce (MRJob)
-*MPI (mpi4py)
-*Python (sys,string)
+* MapReduce (MRJob)
+* MPI (mpi4py)
+* Python (sys,string)
 
 
 ### Source Code: ###
@@ -39,9 +39,9 @@ There are a number of approaches to parallelizing the Rabin-Karp algorithm that 
 * `RabinKarpParallel.py`: MPI-master-slave parallel implementation of the Rabin-Karp algorithm (as described in the paper) on a corpus of texts
 * `mpirka.py`: single text MPI-send-recv parallel implementation of the Rabin-Karp algorithm
 * `MPIrka2.py`: MPI-master-slave implementation of running the Rabin-Karp algorithm on a corpus of texts - embarassingly parallel method of sending each processor an entire source text file to run the Rabin-Karp algorithm
-*`MRhash.py`: Prehashes a source text by word using MapReduce
-*`mpiRK_chunkCorpus.py`: "..."
+* `MRhash.py`: Prehashes a source text by word using MapReduce
+* `mpiRK_chunkCorpus.py`: "..."
 
 ### Acknowledgements: ###
-Louis Mullie: Project Mentor
-Cris Cecka: Course instructor
+* Louis Mullie: Project Mentor
+* Cris Cecka: Course instructor
