@@ -38,7 +38,7 @@ There are a number of approaches to parallelizing the Rabin-Karp algorithm that 
 * `RabinKarpSerial.py`: Serial implementation of the Rabin-Karp algorithm on a corpus of texts 
 * `RabinKarpParallel.py`: MPI-master-slave parallel implementation of the Rabin-Karp algorithm (as described in the paper) on a corpus of texts
 * `mpirka.py`: single text MPI-send-recv parallel implementation of the Rabin-Karp algorithm
-* `MPIrka2.py`: MPI-master-slave implementation of running the Rabin-Karp algorithm on a corpus of texts - embarassingly parallel method of sending each processor an entire source text file to run the Rabin-Karp algorithm
+* `RabinKarpEmbarParallel.py`: MPI-master-slave implementation of running the Rabin-Karp algorithm on a corpus of texts - embarassingly parallel method of sending each processor an entire source text file to run the Rabin-Karp algorithm
 * `MRhash.py`: Prehashes a source text by word using MapReduce
 * `mpiRK_chunkCorpus.py`: "..."
 
