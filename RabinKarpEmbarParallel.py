@@ -20,7 +20,7 @@ def prep_text(text):
 	exclude = set(string.punctuation)
 	return ''.join(x.upper() for x in text if x not in exclude)	
 
-def sub_search(txt,pat,q,name):
+def sub_search(txt,pat,q,matchlist):
 	#print pat
 #	print "txt from rank %d " %(rank)
 	txtlen = len(txt)
@@ -53,8 +53,9 @@ def sub_search(txt,pat,q,name):
 				if (txt[i+j] != pat[j]):
 					break
 			 	if j == patlen-1:
-			      		print "pattern found at index %d from file: %s" %(i,name)
-			       		print "pattern: %s" %txt[i:i+patlen]
+					matchlist.append((i,txt[i:i+patlen]))
+			      	#	print "pattern found at index %d from file: %s" %(i,name)
+			       	#	print "pattern: %s" %txt[i:i+patlen]
 
 		  if (i < txtlen-patlen):
 		#   print "shifting pat in txt\n"
@@ -67,10 +68,48 @@ def full_search(txt,pat,q,patsize,name):
 	splitpat=splitCount(pat,patsize)
 	matchlist = []	
 	for subpat in range(0,len(splitpat)):
-		sub_search(txt,splitpat[subpat],q,name)
+		sub_search(txt,splitpat[subpat],q,matchlist)
+
+	if len(matchlist) == 0:
+		results = matchlist
+	else: 
+		results = post_process(patsize,matchlist)
+
+	for index,match in results:
+		
+		print "pattern found at index %d in text: %s" %(index,name)
+		print "pattern: %s" %match
 
 	#tell master that it's finished and needs another file
 	comm.send(1,dest=0)
+
+def post_process(patlen,recv_result):
+
+# combines consecutive matches for entire match
+	match_len = len(recv_result)
+	result = []
+	curr = 0
+	offset = 1
+	
+	if match_len == 1:
+		result.append(recv_result[curr])
+		return result
+	else:
+		index,string = recv_result[curr]
+
+	while  curr < match_len:
+		nextcurr = curr+offset
+	
+		if nextcurr < match_len and index + offset*patlen == recv_result[nextcurr][0] :
+			string = string + " " + recv_result[nextcurr][1]
+			offset += 1			
+		else:
+			result.append((index,string))
+			curr = nextcurr 
+			if curr < match_len:
+				index,string = recv_result[curr]	
+
+	return result
 
 def master(filenames,patlen):
 
@@ -98,7 +137,6 @@ def master(filenames,patlen):
 	#counter of received processed file parts per processor
 	received = 0 
 	total = numfiles
-	print 'total %d' %(total)
 
 	#if there aren't enough txtfiles to give to each processor
 	assert numfiles > size
@@ -117,21 +155,17 @@ def master(filenames,patlen):
 	
 		recv_result = comm.recv(source=MPI.ANY_SOURCE,tag=MPI.ANY_TAG,status=status)
 		slave = status.Get_source() 
-		print 'slave: %d' %slave
 			#print 'filecount received from slave %d: %d' %(i,filecount)
 		#update total number of received parts
 		received += 1
-		print 'received %d' %received
 	
 		#update to next file to process
 		count += 1
 		#send the next file part to processor when it's finished	
 		#each slave must do a part in each file
 		if count < numfiles:
-			print 'count: %d' %count
 			comm.send(text_list[count],dest=slave)
 			
-	print 'out of loop'
 	#stop all processes when everyone is done
 	for s in range(1,size):
 		comm.send(-1,dest=s,tag=100)			
