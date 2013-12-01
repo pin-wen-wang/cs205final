@@ -46,11 +46,16 @@ def full_search(hashedData,fulltxt, pat,q):
         print "Match on line ", lineNum
         print txtList[lineNum-1] # line nums start at 1, python indexes at 0
 
+    ### rolling hash is missing. i need to shift by one word. and thehash is supposed to
+
+    ### preprocessing takes away magic of rolling hash
+
 
 if __name__ == '__main__':
 
   hashedtxt, fulltxt, pattxt = sys.argv[1:]
 
+  # this is the actual corpus text
   with open(fulltxt, "r") as txtfile:
     txt=txtfile.read().replace('\n', ' ') # replace newline with space
 
@@ -61,6 +66,7 @@ if __name__ == '__main__':
     for chunk in list(grouped):
         txtList.append(' '.join(chunk))
 
+  # this is the pattern in whih we're searching for plagiarism
   # need to reshape pattern too or do it on the fly
   with open(pattxt,"r") as patfile:
     pat=patfile.read().replace('\n',' ')
@@ -78,6 +84,7 @@ if __name__ == '__main__':
 
 
 
+  # this is the file with preprocessed hashed values of corpus text
   ins = open(hashedtxt, "r" )
   hashedData = []
   for line in ins:

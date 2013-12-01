@@ -1,0 +1,3 @@
+../corpus/FrankensteinHashed.txt
+../corpus/PrideAndPrejudiceHashed.txt
+../corpus/WutheringHeightsHashed.txt

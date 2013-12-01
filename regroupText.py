@@ -2,6 +2,8 @@
 """
 Purpose: Take a text file (intext) and reshape so that there's a newline after every 20 words.
 
+usage: python ../cs205final/regroupText.py PrideAndPrejudice.txt PrideAndPrejudiceReshaped.txt
+
 This text should then have file numbers added to it from command line:
   awk '{printf("%5d : %s\n", NR,$0)}' reshapedFile.txt > fileWithNumbers.txt
 
@@ -12,6 +14,7 @@ The file with line numbers should then be hashed with MRhash.py:
 
 #import subprocess as sp
 import itertools
+import sys
 
 # from http://stackoverflow.com/questions/1624883/alternative-way-to-split-a-list-into-groups-of-n
 def grouper(n, iterable, fillvalue=None):
@@ -23,11 +26,11 @@ def grouper(n, iterable, fillvalue=None):
 if __name__ == '__main__':
 
 
-  # NAME OF INPUT TEXT
-  intext = 'Frankenstein.txt'
+  # NAME OF INPUT TEXT, NAME OF TEXT GROUPED INTO 20 WORDS A LINE
+  intext, textReshaped = sys.argv[1:]
 
-  # NAME OF TEXT GROUPED INTO 20 WORDS A LINE
-  textReshaped = 'FrankensteinReshaped.txt'
+
+  #textReshaped = 'FrankensteinReshaped.txt'
 
   # NAME OF OUTPUT TEXT WITH LINE NUMBERS
   #finaltext = 'FrankensteinWithNum.txt'

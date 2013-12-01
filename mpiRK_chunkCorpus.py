@@ -1,4 +1,3 @@
-​# -*- coding: utf-8 -*-
 """
 MPI where each process takes a portion of corpus (1 text) and searches for pattern throughout its chunk.
 
@@ -46,11 +45,12 @@ def processData(hashedData, pat, m, rank, comm):
     new = word.translate(string.maketrans("",""), string.punctuation).upper()
     pProcessed.append(new)
     pHashed.append(letsHash(new, q=1009, d=26))
-
+  #print pHashed
 
   # for each m-tuple in corpus
   for k,txtMtuple in enumerate(izip(*[iter(hashedData[i:]) for i in xrange(m)])):
-
+    if k == 0:
+      print txtMtuple
     # for m-tuples in pattern -- might just use izip here
     for i in range(len(pHashed)-m+1): # first word in seqs
 
@@ -67,7 +67,8 @@ def processData(hashedData, pat, m, rank, comm):
       if broken == m: # was not redefined
           matches.append((k,' '.join(pProcessed[i:i+m])))
 
-  processMatches(matches,m) # print out matches
+  if len(matches) > 0:
+    processMatches(matches,m) # print out matches
 
 ########
 
@@ -78,7 +79,7 @@ def processMatches(matches,m):
 
   # data frame with tuple number and associated text
   df = pd.DataFrame({'tupleNum': [x[0] for x in matches],'txt': [x[1] for x in matches]})
-  #print df.tupleNum.values
+  #print 'tup', df.tupleNum.values
 
   # for text with consecutive tuples, I don't want to print out each of these tuples; I want to merge them so I'm not repeating the words in the middle. Try printing out in processData after a match has been found to see the difference.
   for key,group in groupby(enumerate(df.tupleNum), lambda (index, item): index-item):
@@ -100,6 +101,7 @@ def processMatches(matches,m):
 
     print 'Match found of length ', numFullQuotes, ' chunks (defined by m)'
     print ' '.join(matchedTxt)
+    print
 
 ########
 
