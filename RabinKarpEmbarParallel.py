@@ -139,7 +139,7 @@ def master(filenames,patlen):
 	total = numfiles
 
 	#if there aren't enough txtfiles to give to each processor
-	assert numfiles > size
+	assert numfiles >= size-1
 	
 	#initialization of first file in all processors
 	#print 'txtlen %d' %txtlen
@@ -148,7 +148,7 @@ def master(filenames,patlen):
 		#need to keep track of start so we know the absolute index
 		comm.send(text_list[i],dest=i+1)
 
-	count = (size-1)
+	count = size-2
 
 	
 	while received < total-1:
@@ -197,11 +197,11 @@ if __name__ == '__main__':
 	
 	q = 1079
 
+	start = MPI.Wtime()
 	if rank == 0:
-		start = MPI.Wtime()
 		master(filenames,patsize)
-		end = MPI.Wtime()
-		print "Time: %f sec" %(end-start)
 	else:
 		slave(pat,q,patsize)
 
+	end = MPI.Wtime()
+	print "Time: %f sec" %(end-start)
