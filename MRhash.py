@@ -71,8 +71,9 @@ class processText(MRJob):
         for wordNum, word in enumerate(text.split(' ')):
 
             # strip word of puncuation
-            exclude = set(string.punctuation)
-            word = ''.join(ch.upper() for ch in word if ch not in exclude)
+            #exclude = set(string.punctuation)
+            #word = ''.join(ch.upper() for ch in word if ch not in exclude)
+            word = word.translate(string.maketrans("",""), string.punctuation).upper()
 
             yield lineNum, [wordNum, letsHash(word, q, d)]
 
