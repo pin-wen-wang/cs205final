@@ -1,6 +1,9 @@
-#
-#usage: python mpirka2.py [single text] [pattern]
-#
+##################################################################################
+# embarassingly parallel master-slave Rabin Karp algorithm
+# implemented from paper
+# usage : mpiexec -n [# of processors] python filenames.txt multipattern.txt
+##################################################################################
+
 from mpi4py import MPI
 import numpy as np
 import sys
@@ -11,15 +14,19 @@ comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
 
+#d value for rolling hash
 d = 26
 
+#splits pattern into specified pattern size before searching
 def splitCount(s, count):
 	return[s[i:i+count] for i in range(0,len(s),count)]
 
+# removes punctuation and capitalizes letters to prep for processing
 def prep_text(text):
 	exclude = set(string.punctuation)
 	return ''.join(x.upper() for x in text if x not in exclude)	
 
+#runs the rka of a piece of the pattern on piece of text
 def sub_search(txt,pat,q,matchlist):
 	#print pat
 #	print "txt from rank %d " %(rank)
@@ -63,6 +70,7 @@ def sub_search(txt,pat,q,matchlist):
 		  	if (hashtxt < 0):
 				hashtxt = hashtxt + q
 
+#runs the rka of a piece of the pattern on piece of text
 def full_search(txt,pat,q,patsize,name):
 
 	splitpat=splitCount(pat,patsize)
@@ -83,6 +91,7 @@ def full_search(txt,pat,q,patsize,name):
 	#tell master that it's finished and needs another file
 	comm.send(1,dest=0)
 
+# combines consecutive matches for entire match
 def post_process(patlen,recv_result):
 
 # combines consecutive matches for entire match
@@ -111,6 +120,9 @@ def post_process(patlen,recv_result):
 
 	return result
 
+# divides files into equal pieces for each slave processor and sends that part of each 
+# file to processors until no more files need to be processed and calculates absolute 
+# index once each file returns its matches
 def master(filenames,patlen):
 
 	status = MPI.Status()
@@ -139,7 +151,7 @@ def master(filenames,patlen):
 	total = numfiles
 
 	#if there aren't enough txtfiles to give to each processor
-	assert numfiles > size
+	assert numfiles >= size-1
 	
 	#initialization of first file in all processors
 	#print 'txtlen %d' %txtlen
@@ -148,7 +160,7 @@ def master(filenames,patlen):
 		#need to keep track of start so we know the absolute index
 		comm.send(text_list[i],dest=i+1)
 
-	count = (size-1)
+	count = size-2
 
 	
 	while received < total-1:
@@ -170,6 +182,7 @@ def master(filenames,patlen):
 	for s in range(1,size):
 		comm.send(-1,dest=s,tag=100)			
 
+#conducts the rka on its piece of the text
 def slave(pat,q,patlen):
 	
 	status = MPI.Status()
@@ -183,10 +196,15 @@ def slave(pat,q,patlen):
 		full_search(txt,pat,q,patlen,name)
 
 
+###############################----MAIN----#############################################
+
 if __name__ == '__main__':
 
+	if len(argv) != 3:
+		print "Usage: mpiexec -n [# of processors] python", argv[0], "[corpus filenames] [input text]"
+		exit()
 	# distribute data to other processes to do computations
-	filenames, pattxt = sys.argv[1:]
+	filenames, pattxt = argv[1:]
 	with open (pattxt,"r") as patfile:
 		pat=patfile.read().replace('\n',' ')
 	
@@ -197,11 +215,11 @@ if __name__ == '__main__':
 	
 	q = 1079
 
+	start = MPI.Wtime()
 	if rank == 0:
-		start = MPI.Wtime()
 		master(filenames,patsize)
-		end = MPI.Wtime()
-		print "Time: %f sec" %(end-start)
 	else:
 		slave(pat,q,patsize)
 
+	end = MPI.Wtime()
+	print "Time: %f sec" %(end-start)

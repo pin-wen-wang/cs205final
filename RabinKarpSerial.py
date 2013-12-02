@@ -1,16 +1,26 @@
-#########################################
+##################################################################################
 # http://www.geeksforgeeks.org/searching-for-patterns-set-3-rabin-karp-algorithm#/
 # serial Rabin Karp algorithm
-# currently runs by : python RabinKarpSerial.py filenames.txt pattern2.txt
-#########################################
+# usage : python RabinKarpSerial.py filenames.txt multipattern.txt
+##################################################################################
+
 import time
 import string
-import sys
+from sys import argv
+
+#d value for rolling hash
 d = 26 # number of characters in input alphabet?
 
+# splits pattern into specified pattern size before searching
 def splitCount(s, count):
 	return[s[i:i+count] for i in range(0,len(s),count)]
 
+# removes punctuation and capitalizes letters to prep for processing
+def prep_text(text):
+  exclude = set(string.punctuation)
+  return ''.join(x.upper() for x in text if x not in exclude)
+
+#runs the rka of a piece of the pattern on piece of text
 def sub_search(txt,pat,q,matchlist):
 
   patlen = len(pat)
@@ -63,6 +73,7 @@ def sub_search(txt,pat,q,matchlist):
 	    if (hashtxt2 < 0):
 		hashtxt2 = hashtxt2 + q2
 
+# splits pattern into pieces and calls sub_search on each piece
 def full_search(txt,pat,q,patsize):
 
   splitpat = splitCount(pat,patsize)
@@ -72,13 +83,8 @@ def full_search(txt,pat,q,patsize):
 	  sub_search(txt,splitpat[subpat],q,matchlist)
   return matchlist
 
-def prep_text(text):
-  exclude = set(string.punctuation)
-  return ''.join(x.upper() for x in text if x not in exclude)
-
-def post_process(patlen,recv_result):
-
 # combines consecutive matches for entire match
+def post_process(patlen,recv_result):
 	match_len = len(recv_result)
 	result = []
 	curr = 0
@@ -104,21 +110,27 @@ def post_process(patlen,recv_result):
 
 	return result
 
+###############################----MAIN----#############################################
+
 if __name__ == '__main__':
 
+	if len(argv) != 3:
+		print "Usage: mpiexec -n [# of processors] python", argv[0], "[corpus filenames] [input text]"
+		exit()
 	q = 1079
 	q2 = 1011
-	patsize = 100;
+	patsize = 30;
 	
 	# opening many files
 
-	filenames, pattxt = sys.argv[1:]
+	filenames, pattxt = argv[1:]
 	with open (pattxt,"r") as patfile:
 		pat=patfile.read().replace('\n',' ')
 
 	#gets rid of all punctuation
 	pat = prep_text(pat)
 
+	#starts rka
 	start = time.time()
 	files = open(filenames).readlines()
 	for i in files:
