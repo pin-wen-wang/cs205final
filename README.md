@@ -43,6 +43,11 @@ There are a number of approaches to parallelizing the Rabin-Karp algorithm that 
 * `MasterSlave_chunkMultCorpus.py`: prehashed corpus (multiple texts) is chunked into small pieces and dynamically distributed to slaves.
 * `regroupText2.py`: Reshapes text into X pieces and hashes them using MRhash_word.py
 
+### Usage : ###
+
+* Serial: python RabinKarpSerial.py filenames.txt multipattern.txt
+* Parallel: mpiexec -n 16 python RabinKarpParallel.py filenames.txt multipattern.txt
+
 ### Acknowledgements: ###
 * Louis Mullie: Project Mentor
 * Cris Cecka: Course instructor
