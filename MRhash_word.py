@@ -18,7 +18,7 @@ Run MR job on command line:
 Further consideration:
   --Empty lines (newline char?) get hash value of 0. Probs want to not hash these in first place
 
-  --Is the hashing function okay? Using prime number q = 1009
+  --Improv hashing function? Using prime number q = 1009
 
   --I remove punc from text but leave numbers. should d = 26 + 10?
 

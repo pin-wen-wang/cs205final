@@ -192,7 +192,7 @@ if __name__ == '__main__':
 
   hashedtxt, pattxt = sys.argv[1:] # probs need to change
 
-  m = 8 # num consecutive words that define plagiarism
+  m = 20 # num consecutive words that define plagiarism
 
   # this is the pattern in whih we're searching for plagiarism
   with open(pattxt,"r") as patfile:

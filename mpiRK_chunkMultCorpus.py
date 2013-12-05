@@ -1,7 +1,7 @@
 """
-MPI where each process takes a portion of corpus (1 text) and searches for pattern throughout its chunk.
+MPI where each process takes a portion of corpus (multiple texts) and searches for pattern throughout its chunk.
 
-Using the Parallel RK paper to divide up text.
+Using the Parallel RK paper to divide up each text.
 
 Input:
 --preprocessed corpus (1 text) that's been divided into K (= #processes) parts using MRhash_word.py
@@ -19,11 +19,13 @@ To do:
 
 import sys
 import string
+import numpy as np
+import matplotlib.pyplot as plt
 import pandas as pd
 from mpi4py import MPI
-#from regroupText import grouper
+from regroupText import grouper
 from MRhash import letsHash
-#from collections import Counter
+from collections import Counter
 from itertools import izip, groupby
 from operator import itemgetter
 
@@ -43,8 +45,7 @@ def processData(hashedData, pat, m, rank, comm):
     new = word.translate(string.maketrans("",""), string.punctuation).upper()
     pProcessed.append(new)
     pHashed.append(letsHash(new, q=1009, d=26))
-
-  if rank == 0: print "Pattern length is ", len(pHashed)
+  #print pHashed
 
   # for each m-tuple in corpus
   for k,txtMtuple in enumerate(izip(*[iter(hashedData[i:]) for i in xrange(m)])):
@@ -97,7 +98,7 @@ def processMatches(matches,m):
       words = df[df.tupleNum==val].txt.values[0].split()
       matchedTxt.append(words[-1])
 
-    print 'Match found of length ', numFullQuotes, '*', m, '+ words'
+    print 'Match found of length ', numFullQuotes, ' chunks (defined by m)'
     print ' '.join(matchedTxt)
     print
 
@@ -112,36 +113,44 @@ if __name__ == '__main__':
   size = comm.Get_size()
   rank = comm.Get_rank()
 
-  m = 20 # pattern size (unit: words)
+  m = 10 # pattern size (unit: words)
 
-  hashedtxt, pattxt = sys.argv[1:]
+  fileNames, pattxt = sys.argv[1:]
 
   # this is the pattern in whih we're searching for plagiarism
   with open(pattxt,"r") as patfile:
     pat=patfile.read().replace('\n',' ') ### Clean up punc, etc?
 
 
-  # this is the file with preprocessed hashed values of corpus text
-  # try scattering
-  with open(hashedtxt, "r" ) as htxt:
-    txt = htxt.readlines()
-  mytxt = txt[rank]
+  # open file that lists texts to be searched through (corpus)
+  with open(fileNames,'r') as files:
+    names = files.readlines()
+    numTexts = len(names)
 
-  # convert from string to list of tuples of form (lineNum, [#...#])
-  hashedData = []
-  processNum, sep, data = mytxt.partition('[')
-  #print processNum, rank
-  #assert int(processNum) == rank # reason this breaks starting from k = 16???
+  for name in names:
+    fileName = name.replace('\n','')
 
-  hashedLine = [int(x) for x in data[:-2].split(", ")] # don't include ] \n in data
+    try:
+      with open(fileName,'r') as htxt:
+        txt = htxt.readlines()
+        mytxt = txt[rank]
 
-  start_time = MPI.Wtime()
-  processData(hashedLine, pat, m, rank, comm)
-  end_time = MPI.Wtime()
+    # if file isn't in current directory - edit fullfilename as necessary
+    except IOError:
+      fullfilename = '../corpus/'+fileName
+      with open(fullfilename,"r") as htxt:
+        txt = htxt.readlines()
+        mytxt = txt[rank]
 
-  if rank == 0:
-    print "Time: %f secs" % (end_time - start_time)
+    processNum, sep, data = mytxt.partition('[')
+    assert int(processNum) == rank
 
+    hashedLine = [int(x) for x in data[:-2].split(", ")] # don't include ] \n in data
+
+    #start_time = MPI.Wtime()
+    processData(hashedLine, pat, m, rank, comm)
+    #end_time = MPI.Wtime()
+    #print "Time: %f secs (process %d)" % ((end_time - start_time), rank)
 
 ####
 ####

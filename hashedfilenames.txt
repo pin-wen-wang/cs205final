@@ -1,3 +1,4 @@
-../corpus/FrankensteinHashed.txt
-../corpus/PrideAndPrejudiceHashed.txt
-../corpus/WutheringHeightsHashed.txt
+../corpus/e1Hashed_4chunks.txt
+../corpus/e2Hashed_4chunks.txt
+../corpus/e3Hashed_4chunks.txt
+../corpus/e4Hashed_4chunks.txt
