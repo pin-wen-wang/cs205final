@@ -5,10 +5,9 @@ mpiexec -n 2 python MasterSlave_chunkMultCorpus.py hashedfilenames.txt multipatt
 
 adjust code based on where texts are located
 
-problem: if pattern is match between half of 1st line and next line.
-  could split on paragraphs to make smaller chance of this happening (multipattern.txt). could have 1.5x as many lines.
-
 ** create hashedFileNames.txt that contains names of hashed files. hash these files. then run this file.
+
+Serially handles multiple texts
 
 """
 
@@ -39,9 +38,8 @@ def master(fileNames, comm, q=1009):
 
   """
   if numTexts == 1:
-    singleText(names, comm)
+    singleText(numTexts, names.replace('\n',''), comm)
   else:
-    # do something else
     multTexts(names, numTexts, comm)
   """
 
@@ -246,7 +244,6 @@ if __name__ == '__main__':
   fileNames, pattxt = sys.argv[1:] # probs need to change
 
   m = 20 # num consecutive words that define plagiarism
-  print m
 
 
   if comm.Get_rank() == 0:
