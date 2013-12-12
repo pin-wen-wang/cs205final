@@ -21,9 +21,7 @@ import sys
 import string
 import pandas as pd
 from mpi4py import MPI
-#from regroupText import grouper
 from MRhash import letsHash
-#from collections import Counter
 from itertools import izip, groupby
 from operator import itemgetter
 
@@ -128,7 +126,6 @@ if __name__ == '__main__':
   mytxt = txt[rank]
 
   # convert from string to list of tuples of form (lineNum, [#...#])
-  hashedData = []
   processNum, sep, data = mytxt.partition('[')
   #print processNum, rank
   #assert int(processNum) == rank # reason this breaks starting from k = 16???
@@ -145,18 +142,3 @@ if __name__ == '__main__':
 
 
 ####
-####
-"""
-  for txtChunk in izip(* [iter(hashedData[i:]) for i in xrange(m)] )):
-      for i,patChunk in enumerate(izip(* [iter(pat[i:]) for i in xrange(m)] ))):
-
-          breakpt = m # reset breakpt
-          for j in xrange(m):
-              if patChunk[j] != txtChunk[j]:
-                breakpt = j
-                break
-        if breakpt == m: # was not redefined
-          print 'Match found on line ',i
-          print txtChunk
-
-"""

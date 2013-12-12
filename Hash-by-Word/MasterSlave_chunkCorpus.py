@@ -14,13 +14,11 @@ from mpi4py import MPI
 from MRhash import letsHash
 from mpiRK_chunkCorpus import processMatches
 #from collections import Counter
-from itertools import izip, groupby
-from operator import itemgetter
+from itertools import izip
 
 import sys
 import string
 import numpy as np
-import pandas as pd
 
 
 KILL_TAG = 1
@@ -127,43 +125,6 @@ def checkTxt(pHashed, pProcessed, txt, lineNum, m):
     processMatches(matches,m) # print out matches
 
 ##########
-
-
-
-########
-def processMatches2(matches,m):
-  print matches[0]
-  # data frame with tuple number and associated text
-  df = pd.DataFrame({'tupleNum': [x[0] for x in matches],'txt': [x[1] for x in matches]})
-  #print df.tupleNum.values
-
-  # for text with consecutive tuples, I don't want to print out each of these tuples; I want to merge them so I'm not repeating the words in the middle. Try printing out in processData after a match has been found to see the difference.
-  for key,group in groupby(enumerate(df.tupleNum), lambda (index, item): index-item):
-
-    # turn group into list of consecutive tuples
-    group = map(itemgetter(1), group)
-    #print 'group', (group)
-    # can append whole m-sized quotes
-    numFullQuotes = len(group)/m # check the math here
-
-    matchedTxt = list(df[df.tupleNum==group[0]].txt.values)
-
-    # append new words from consecutive tuples
-    for val in group[1:]:
-
-      # split the chunk of text into words
-      words = df[df.tupleNum==val].txt.values[0].split()
-      matchedTxt.append(words[-1])
-      #print words[-1]
-
-    print 'Match found of length!! ', numFullQuotes, ' chunks (defined by m)'
-    print ' '.join(matchedTxt)
-    print
-
-########
-
-
-
 
 
 ##########
