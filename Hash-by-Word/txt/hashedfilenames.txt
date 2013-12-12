@@ -1,0 +1,4 @@
+../corpus/e1Hashed_4chunks.txt
+../corpus/e2Hashed_4chunks.txt
+../corpus/e3Hashed_4chunks.txt
+../corpus/e4Hashed_4chunks.txt

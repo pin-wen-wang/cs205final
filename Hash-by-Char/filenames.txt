@@ -1,0 +1,10 @@
+GreatExpectations.txt
+Frankenstein.txt
+Walden.txt
+Republic.txt
+WutheringHeights.txt
+TaleOfTwoCities.txt
+KingJamesBible.txt
+ParadiseLost.txt
+PrideAndPrejudice.txt
+Miserables.txt
