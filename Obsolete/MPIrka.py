@@ -1,9 +1,12 @@
-#
-#usage: python mpirka2.py [single text] [pattern]
-#
+##################################################################################
+# parallel master-slave Rabin Karp algorithm
+# implemented from paper
+# usage : mpiexec -n [# of processors] python filenames.txt multipattern.txt
+##################################################################################
+
 from mpi4py import MPI
 import numpy as np
-import sys
+from sys import argv
 import string
 
 # set up communication world
@@ -11,15 +14,19 @@ comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
 
+#d value for rolling hash
 d = 26
 
+#splits pattern into specified pattern size before searching
 def splitCount(s, count):
 	return[s[i:i+count] for i in range(0,len(s),count)]
 
+# removes punctuation and capitalizes letters to prep for processing
 def prep_text(text):
 	exclude = set(string.punctuation)
 	return ''.join(x.upper() for x in text if x not in exclude)	
 
+#runs the rka of a piece of the pattern on piece of text
 def sub_search(txt,pat,q,matchlist):
 	#print pat
 #	print "txt from rank %d " %(rank)
@@ -64,6 +71,7 @@ def sub_search(txt,pat,q,matchlist):
 		  	if (hashtxt < 0):
 				hashtxt = hashtxt + q
 
+# splites pattern into pieces and calls sub_search on each piece
 def full_search(txt,pat,q,patsize,filecount):
 
 	splitpat=splitCount(pat,patsize)
@@ -73,6 +81,36 @@ def full_search(txt,pat,q,patsize,filecount):
 
  	comm.send(matchlist,dest=0,tag=filecount)
 
+# combines consecutive matches for entire match
+def post_process(patlen,recv_result):
+	match_len = len(recv_result)
+	result = []
+	curr = 0
+	offset = 1
+	
+	if match_len == 1:
+		result.append(recv_result[curr])
+		return result
+	else:
+		index,string = recv_result[curr]
+
+	while  curr < match_len:
+		nextcurr = curr+offset
+	
+		if nextcurr < match_len and index + offset*patlen == recv_result[nextcurr][0] :
+			string = string + " " + recv_result[nextcurr][1]
+			offset += 1			
+		else:
+			result.append((index,string))
+			curr = nextcurr 
+			if curr < match_len:
+				index,string = recv_result[curr]	
+
+	return result
+
+# divides files into equal pieces for each slave processor and sends that part of each 
+# file to processors until no more files need to be processed and calculates absolute 
+# index once each file returns its matches
 def master(filenames,patlen):
 
 	status = MPI.Status()
@@ -88,11 +126,6 @@ def master(filenames,patlen):
 		text_list.append((filename,prep_text(txt)))
 
 		#print "txtlen %d" %txtlen
-	
-
-	# instead of dividing the file into the number of processors,
-	# divide the file into a set number of pieces and keep sending
-	# to processors until there are no more pieces from the files to 
 	# run
 	numfiles = len(text_list)
 	k = size-1
@@ -134,9 +167,17 @@ def master(filenames,patlen):
 			name,txt = text_list[filecount]
 			txtlen = len(txt)
 			start = int(round(((slave-1)*(txtlen-patlen+1)/k)))
-	
+
+			#post processing for combining consecutive matches
+			result = []
+			match_len = len(recv_result)
+			if match_len > 0 :
+				result = post_process(patlen,recv_result) 
+			else:
+				result = recv_result
+
 			#print out results received from that slave
-			for index, match in recv_result:
+			for index, match in result:
 			       	abs_index = start+index
 			      	print "pattern found at index %d from file: %s" %(abs_index,name)
 			       	print "pattern: %s" %match
@@ -167,6 +208,8 @@ def master(filenames,patlen):
 	for s in range(1,size):
 		comm.send(-1,dest=s,tag=100)			
 
+
+#conducts the rka on its piece of the text
 def slave(pat,q,patlen):
 	
 	status = MPI.Status()
@@ -179,23 +222,31 @@ def slave(pat,q,patlen):
 		if local_data == -1: break
 		full_search(local_data,pat,q,patlen,currfile)
 
+###############################----MAIN----#############################################
 
 if __name__ == '__main__':
 
+	if len(argv) != 3:
+		print "Usage: mpiexec -n [# of processors] python", argv[0], "[corpus filenames] [input text]"
+		exit()
+
 	# distribute data to other processes to do computations
-	filenames, pattxt = sys.argv[1:]
+	filenames, pattxt = argv[1:]
 	with open (pattxt,"r") as patfile:
 		pat=patfile.read().replace('\n',' ')
 	
 	pat = prep_text(pat) 
 
 	#size of pattern we want to match
-	patsize = 100 
+	patsize = 50 
 	
 	q = 1079
 
 	if rank == 0:
+		start = MPI.Wtime()
 		master(filenames,patsize)
+		end = MPI.Wtime()
+		print "Time: %f sec" %(end-start)
 	else:
 		slave(pat,q,patsize)
 
