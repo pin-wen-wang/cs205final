@@ -10,7 +10,7 @@ Parallel Rabin-Karp Algorithm
 
 ### Introduction: ###
 
-The Rabin-Karp Algorithm is an implementation of exact string matching that uses a rolling hash to find any one set of pattern strings in a text. 
+The Rabin-Karp Algorithm is an implementation of exact string matching that uses a rolling hash to find any one set of pattern strings in a text.
 
 The Rabin-Karp algorithm is used in detecting plagiarism because given a pattern and a source of texts, the algorithm can quickly search through papers for patterns from the source material.
 
@@ -19,7 +19,7 @@ In this project, we implement serial and parallel versions of the Rabin-Karp alg
 ###Approaches: ###
 There are a number of approaches to parallelizing the Rabin-Karp algorithm that we will design and analyze. We can divide the corpus of texts, and/or the pattern among processes and run the algorithm on the corpus in real-time (with the rolling hash) or preprocessed. Inspired by the original Rabin-Karp algorithm, we implement the serial and parallel versions as well as attempt our own parallel version using prehashed corpuses.
 
-* Takes the Rabin-Karp algorithm and parallelizes the rolling hash using MPI. 
+* Takes the Rabin-Karp algorithm and parallelizes the rolling hash using MPI.
 
 * Prehash the corpus of texts that will be searched through by hashing each word using MapReduce, and search on the pre-processed corpus of texts for patterns.
 
@@ -28,20 +28,20 @@ There are a number of approaches to parallelizing the Rabin-Karp algorithm that 
 
 * MapReduce (MRJob)
 * MPI (mpi4py)
-* Python (sys,string)
+* Python (sys, string, numpy, itertools, pandas)
 
 
 ### Source Code: ###
 
-* `RabinKarpSerial.py`: Serial implementation of the Rabin-Karp algorithm on a corpus of texts 
+* `RabinKarpSerial.py`: Serial implementation of the Rabin-Karp algorithm on a corpus of texts
 * `RabinKarpParallel.py`: MPI-master-slave parallel implementation of the Rabin-Karp algorithm (as described in the paper) on a corpus of texts
 * `mpirka.py`: single text MPI-send-recv parallel implementation of the Rabin-Karp algorithm
 * `RabinKarpEmbarParallel.py`: MPI-master-slave implementation of running the Rabin-Karp algorithm on a corpus of texts - embarassingly parallel method of sending each processor an entire source text file to run the Rabin-Karp algorithm
-* `MRhash_word.py`: Prehashes a source text by word using MapReduce and divides the hashed text into X chunks 
+* `MRhash_word.py`: Prehashes a source text by word using MapReduce and divides the hashed text into X chunks
 * `mpiRK_chunkCorpus.py`: single text parallel implementation of Rabin-Karp algorithm where each process searches for pattern in one chunk of prehashed corpus text.
 * `MasterSlave_chunkCorpus.py`: prehashed corpus (single text) is chunked into small pieces and dynamically distributed to slaves.
 * `MasterSlave_chunkMultCorpus.py`: prehashed corpus (multiple texts) is chunked into small pieces and dynamically distributed to slaves.
-* `regroupText2.py`: Reshapes text into K pieces and hashes text using MRhash_word.py, assuming m identical words=plagiarism [usage: python regroupText2.py Frankenstein K m] 
+* `regroupText2.py`: Reshapes text into K pieces and hashes text using MRhash_word.py, assuming m identical words=plagiarism [usage: python regroupText2.py Frankenstein K m]
 
 ### Acknowledgements: ###
 * Louis Mullie: Project Mentor
