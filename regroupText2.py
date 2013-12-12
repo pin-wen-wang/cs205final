@@ -2,7 +2,7 @@
 """
 Purpose: Take a text (basename) and divide into K (#processes) pieces. or K >> #processes for master/slave. Then hash using map reduce
 
-usage: python regroupText2.py Frankenstein 4 20 40
+usage: python regroupText2.py Frankenstein K m
 
 Input
 --basename: name of text we're working with
@@ -22,7 +22,7 @@ if __name__ == '__main__':
 
   start = time.time()
 
-  basename, Kstr, m, numWordsPerLine = sys.argv[1:]
+  basename, Kstr, m = sys.argv[1:]
 
   m = int(m)
   K = int(Kstr)

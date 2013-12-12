@@ -17,15 +17,11 @@ To do:
 """
 
 
-import sys
+import sys, time
 import string
-import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
 from mpi4py import MPI
-from regroupText import grouper
 from MRhash import letsHash
-from collections import Counter
 from itertools import izip, groupby
 from operator import itemgetter
 
@@ -68,6 +64,8 @@ def processData(hashedData, pat, m, rank, comm):
 
   if len(matches) > 0:
     processMatches(matches,m) # print out matches
+
+    return time.time()
 
 ########
 
@@ -113,9 +111,11 @@ if __name__ == '__main__':
   size = comm.Get_size()
   rank = comm.Get_rank()
 
-  m = 10 # pattern size (unit: words)
+  m = 20 # pattern size (unit: words)
 
   fileNames, pattxt = sys.argv[1:]
+
+  if rank == 0: start = MPI.Wtime()
 
   # this is the pattern in whih we're searching for plagiarism
   with open(pattxt,"r") as patfile:
@@ -143,14 +143,15 @@ if __name__ == '__main__':
         mytxt = txt[rank]
 
     processNum, sep, data = mytxt.partition('[')
-    assert int(processNum) == rank
+    #assert int(processNum) == rank
 
     hashedLine = [int(x) for x in data[:-2].split(", ")] # don't include ] \n in data
 
     #start_time = MPI.Wtime()
-    processData(hashedLine, pat, m, rank, comm)
+    endTime = processData(hashedLine, pat, m, rank, comm)
     #end_time = MPI.Wtime()
     #print "Time: %f secs (process %d)" % ((end_time - start_time), rank)
+    if rank == 0: print endTime - start # how to print latest time/last process's time?
 
 ####
 ####

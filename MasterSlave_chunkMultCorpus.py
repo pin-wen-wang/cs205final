@@ -12,10 +12,8 @@ Serially handles multiple texts
 """
 
 from mpi4py import MPI
-#from regroupText import grouper
 from MRhash import letsHash
 from mpiRK_chunkCorpus import processMatches
-#from collections import Counter
 from itertools import izip, groupby
 from operator import itemgetter
 
@@ -83,6 +81,7 @@ def singleText(moreTexts, fileName, comm):
   dummy = np.zeros(1, dtype=np.uint32)
 
   clen = len(hashedData)
+  #print fileName, clen
 
   # Initialize by sending each slave one line of corpus text
   assert (size-1) < clen # num slaves < #lines in corpus
@@ -91,7 +90,7 @@ def singleText(moreTexts, fileName, comm):
     cur_line += 1
 
   # While there is more work
-  while cur_line < clen:
+  while cur_line < (clen-1): #### -1? or just clen?
     #print 'cline', cur_line
 
     # Receive results from a slave
@@ -127,17 +126,20 @@ def slave(pHashed, pProcessed, m, comm):
   dummy = np.zeros(1, dtype=np.uint32) # might not need to send round textLineNum
 
   # Loop until kill command is received
+  rank = comm.Get_rank()
   while True:
     # Recieve a message from the master
     hashedtxt = comm.recv(source=0, tag=MPI.ANY_TAG, status=status)
+
 
     if status.tag == KILL_TAG:
       return
 
     # Do the work
     lineNum,txt = hashedtxt
+    #if comm.Get_rank() == 1 and lineNum == 0: print lineNum, txt
 
-    checkTxt(pHashed, pProcessed, txt, lineNum, m)
+    checkTxt(pHashed, pProcessed, txt, lineNum, m, rank)
 
     # Let master know you're done
     comm.Send(dummy, dest=0, tag=lineNum)
@@ -146,12 +148,14 @@ def slave(pHashed, pProcessed, m, comm):
 
 
 ##########
-def checkTxt(pHashed, pProcessed, txt, lineNum, m):
+def checkTxt(pHashed, pProcessed, txt, lineNum, m, rank):
 
   matches = []
 
   # for each m-tuple in corpus
   for k,txtMtuple in enumerate(izip(*[iter(txt[i:]) for i in xrange(m)])):
+  #for k,txtMtuple in enumerate(izip(*[iter(txt[i:]) for i in xrange(m)])):
+    #if rank == 1 and k <= 2: print k, txtMtuple
 
     # for m-tuples in pattern -- might just use izip here
     for i in range(len(pHashed)-m+1): # first word in seqs
@@ -169,7 +173,7 @@ def checkTxt(pHashed, pProcessed, txt, lineNum, m):
       if broken == m: # was not redefined
           #print (lineNum, k,' '.join(pProcessed[i:i+m]))
           matches.append((k,' '.join(pProcessed[i:i+m])))
-    break
+
 
   if len(matches) > 0:
     processMatches(matches,m) # print out matches
@@ -226,7 +230,6 @@ def hashPat(pat):
     new = word.translate(string.maketrans("",""), string.punctuation).upper()
     pProcessed.append(new)
     pHashed.append(letsHash(new, q=1009, d=26))
-
   return pHashed, pProcessed
 
 ##########

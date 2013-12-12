@@ -44,7 +44,9 @@ def processData(hashedData, pat, m, rank, comm):
     pProcessed.append(new)
     pHashed.append(letsHash(new, q=1009, d=26))
 
-  if rank == 0: print "Pattern length is ", len(pHashed)
+  #if rank == 0:
+   # print "Pattern length is ", len(pHashed), "words"
+    #print "Text length is", comm.Get_size()*len(hashedData), "words"
 
   # for each m-tuple in corpus
   for k,txtMtuple in enumerate(izip(*[iter(hashedData[i:]) for i in xrange(m)])):
@@ -85,9 +87,6 @@ def processMatches(matches,m):
     # turn group into list of consecutive tuples
     group = map(itemgetter(1), group)
 
-    # can append whole m-sized quotes
-    numFullQuotes = len(group)/m # check the math here
-
     matchedTxt = list(df[df.tupleNum==group[0]].txt.values)
 
     # append new words from consecutive tuples
@@ -97,7 +96,8 @@ def processMatches(matches,m):
       words = df[df.tupleNum==val].txt.values[0].split()
       matchedTxt.append(words[-1])
 
-    print 'Match found of length ', numFullQuotes, '*', m, '+ words'
+    print
+    print 'Match found of length ', m, '+', len(group)-1,' words'
     print ' '.join(matchedTxt)
     print
 
@@ -141,6 +141,7 @@ if __name__ == '__main__':
 
   if rank == 0:
     print "Time: %f secs" % (end_time - start_time)
+    print
 
 
 ####

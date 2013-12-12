@@ -198,8 +198,6 @@ if __name__ == '__main__':
   with open(pattxt,"r") as patfile:
     pat=patfile.read().replace('\n',' ')
 
-  pHashed, pProcessed = hashPat(pat)
-
 
 
   if comm.Get_rank() == 0:
@@ -220,6 +218,9 @@ if __name__ == '__main__':
     print "Time: %f secs" % (end_time - start_time)
 
   else:
+    pHashed, pProcessed = hashPat(pat)
+
+    #if comm.Get_rank() == 1: print "Patten length ", len(pHashed)
     slave(pHashed, pProcessed, m, comm)
 
 

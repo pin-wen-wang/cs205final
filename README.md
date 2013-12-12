@@ -41,7 +41,7 @@ There are a number of approaches to parallelizing the Rabin-Karp algorithm that 
 * `mpiRK_chunkCorpus.py`: single text parallel implementation of Rabin-Karp algorithm where each process searches for pattern in one chunk of prehashed corpus text.
 * `MasterSlave_chunkCorpus.py`: prehashed corpus (single text) is chunked into small pieces and dynamically distributed to slaves.
 * `MasterSlave_chunkMultCorpus.py`: prehashed corpus (multiple texts) is chunked into small pieces and dynamically distributed to slaves.
-* `regroupText2.py`: Reshapes text into X pieces and hashes them using MRhash_word.py
+* `regroupText2.py`: Reshapes text into K pieces and hashes text using MRhash_word.py, assuming m identical words=plagiarism [usage: python regroupText2.py Frankenstein K m] 
 
 ### Acknowledgements: ###
 * Louis Mullie: Project Mentor
