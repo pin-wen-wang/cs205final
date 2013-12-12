@@ -48,6 +48,12 @@ Inside the directory `Hash-by-Char` you can run the serial and parallel code by 
 * `Usage: python RabinKarpSerial.py filenames.txt multipattern.txt`
 * `Usage: mpiexec -n [# of processes] python RabinKarpParallel.py filenames.txt multipattern.txt`
 
+
+Inside the directory `Hash-by-Word` you can run the serial and parallel code by running the following:
+* `Usage: python prehashedSerialRK.py filenames.txt multipattern.txt`
+* `Usage: mpiexec -n [# of processes] python RabinKarpParallel.py filenames.txt multipattern.txt`
+<space><space>*<space> `Example: mpiexec -n 20 python MasterSlave_chunkCorpus.py txt/english_smallerHashed_2000chunks.txt multipattern50.txt`
+
 ### Acknowledgements: ###
 * Louis Mullie: Project Mentor
 * Cris Cecka: Course instructor
