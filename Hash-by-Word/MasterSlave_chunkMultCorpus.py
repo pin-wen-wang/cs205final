@@ -1,26 +1,20 @@
 """
-Master Slave
+Master Slave Implementation For Distributing Text From Multiple Files in Corpus To Processes
 
 mpiexec -n 2 python MasterSlave_chunkMultCorpus.py hashedfilenames.txt multipattern.txt
 
-adjust code based on where texts are located
-
-** create hashedFileNames.txt that contains names of hashed files. hash these files. then run this file.
-
 Serially handles multiple texts
-
 """
 
 from mpi4py import MPI
 from MRhash import letsHash
 from mpiRK_chunkCorpus import processMatches
-from itertools import izip, groupby
-from operator import itemgetter
+from itertools import izip
 
 import sys
 import string
 import numpy as np
-import pandas as pd
+
 
 
 KILL_TAG = 1
@@ -34,13 +28,6 @@ def master(fileNames, comm, q=1009):
     names = files.readlines()
     numTexts = len(names)
 
-  """
-  if numTexts == 1:
-    singleText(numTexts, names.replace('\n',''), comm)
-  else:
-    multTexts(names, numTexts, comm)
-  """
-
   for name in names:
     numTexts -= 1
     singleText(numTexts, name.replace('\n',''), comm)
@@ -53,7 +40,8 @@ def master(fileNames, comm, q=1009):
 
 ########
 def singleText(moreTexts, fileName, comm):
-  #print fileName
+  """Distribute work to slaves from text in fileName"""
+
   hashedData = []
 
   try:
@@ -66,7 +54,7 @@ def singleText(moreTexts, fileName, comm):
 
   # if file isn't in current directory - edit fullfilename as necessary
   except IOError:
-    fullfilename = '../corpus/'+fileName
+    fullfilename = '../txt/'+fileName
     with open(fullfilename,"r") as txtfile:
       for line in txtfile:
 
@@ -77,11 +65,12 @@ def singleText(moreTexts, fileName, comm):
 
   size = comm.Get_size()
   status = MPI.Status()
-  cur_line = 0 #np.zeros(1, dtype=np.uint32)
+  cur_line = 0
   dummy = np.zeros(1, dtype=np.uint32)
 
+  # number of lines of work to be done
   clen = len(hashedData)
-  #print fileName, clen
+
 
   # Initialize by sending each slave one line of corpus text
   assert (size-1) < clen # num slaves < #lines in corpus
@@ -90,8 +79,7 @@ def singleText(moreTexts, fileName, comm):
     cur_line += 1
 
   # While there is more work
-  while cur_line < (clen-1): #### -1? or just clen?
-    #print 'cline', cur_line
+  while cur_line < (clen-1):
 
     # Receive results from a slave
     comm.Recv(dummy, source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
@@ -123,7 +111,7 @@ def slave(pHashed, pProcessed, m, comm):
   """ Match pattern to some chunk of corpus """
 
   status = MPI.Status()
-  dummy = np.zeros(1, dtype=np.uint32) # might not need to send round textLineNum
+  dummy = np.zeros(1, dtype=np.uint32)
 
   # Loop until kill command is received
   rank = comm.Get_rank()
@@ -131,13 +119,11 @@ def slave(pHashed, pProcessed, m, comm):
     # Recieve a message from the master
     hashedtxt = comm.recv(source=0, tag=MPI.ANY_TAG, status=status)
 
-
     if status.tag == KILL_TAG:
       return
 
     # Do the work
     lineNum,txt = hashedtxt
-    #if comm.Get_rank() == 1 and lineNum == 0: print lineNum, txt
 
     checkTxt(pHashed, pProcessed, txt, lineNum, m, rank)
 
@@ -149,13 +135,12 @@ def slave(pHashed, pProcessed, m, comm):
 
 ##########
 def checkTxt(pHashed, pProcessed, txt, lineNum, m, rank):
+  '''Check for matches between pHashed (hashed pattern) and txt (one chunk of hashed corpus text)'''
 
   matches = []
 
   # for each m-tuple in corpus
   for k,txtMtuple in enumerate(izip(*[iter(txt[i:]) for i in xrange(m)])):
-  #for k,txtMtuple in enumerate(izip(*[iter(txt[i:]) for i in xrange(m)])):
-    #if rank == 1 and k <= 2: print k, txtMtuple
 
     # for m-tuples in pattern -- might just use izip here
     for i in range(len(pHashed)-m+1): # first word in seqs
@@ -171,7 +156,6 @@ def checkTxt(pHashed, pProcessed, txt, lineNum, m, rank):
 
 
       if broken == m: # was not redefined
-          #print (lineNum, k,' '.join(pProcessed[i:i+m]))
           matches.append((k,' '.join(pProcessed[i:i+m])))
 
 
@@ -180,39 +164,6 @@ def checkTxt(pHashed, pProcessed, txt, lineNum, m, rank):
 
 ##########
 
-
-
-########
-def processMatches2(matches,m):
-  print matches[0]
-  # data frame with tuple number and associated text
-  df = pd.DataFrame({'tupleNum': [x[0] for x in matches],'txt': [x[1] for x in matches]})
-  #print df.tupleNum.values
-
-  # for text with consecutive tuples, I don't want to print out each of these tuples; I want to merge them so I'm not repeating the words in the middle. Try printing out in processData after a match has been found to see the difference.
-  for key,group in groupby(enumerate(df.tupleNum), lambda (index, item): index-item):
-
-    # turn group into list of consecutive tuples
-    group = map(itemgetter(1), group)
-    #print 'group', (group)
-    # can append whole m-sized quotes
-    numFullQuotes = len(group)/m # check the math here
-
-    matchedTxt = list(df[df.tupleNum==group[0]].txt.values)
-
-    # append new words from consecutive tuples
-    for val in group[1:]:
-
-      # split the chunk of text into words
-      words = df[df.tupleNum==val].txt.values[0].split()
-      matchedTxt.append(words[-1])
-      #print words[-1]
-
-    print 'Match found of length!! ', numFullQuotes, ' chunks (defined by m)'
-    print ' '.join(matchedTxt)
-    print
-
-########
 
 
 
@@ -244,10 +195,9 @@ if __name__ == '__main__':
   # is there at least one slave?
   assert comm.Get_size() > 1
 
-  fileNames, pattxt = sys.argv[1:] # probs need to change
+  fileNames, pattxt = sys.argv[1:]
 
   m = 20 # num consecutive words that define plagiarism
-
 
   if comm.Get_rank() == 0:
 
