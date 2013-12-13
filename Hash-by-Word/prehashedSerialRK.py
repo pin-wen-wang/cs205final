@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Serial Rabin Karp that uses MapReduce preprocessed hashed text for the corpus. The pattern is hashed in real time in this algorithm. Borrows functions defined in regroupText.py and MRhash.py
-
---Currently using a single hash instead of a double hash
---Counter isn't a reliable way to find matches since it doesn't care about order. Fix this.
+Serial Rabin Karp that uses MapReduce preprocessed hashed text for the corpus. The pattern is hashed in real time in this algorithm.
 """
 
 
@@ -15,7 +12,7 @@ from MRhash import letsHash
 from itertools import izip
 
 
-d = 26 # number of characters in input alphabet?
+d = 26 # for hash
 
 
 def full_search(hashedData, pat, m=20):
@@ -47,7 +44,6 @@ def full_search(hashedData, pat, m=20):
           broken = j
           break
 
-
       if broken == m: # was not redefined
           matches.append((k,' '.join(pProcessed[i:i+m])))
 
@@ -55,7 +51,6 @@ def full_search(hashedData, pat, m=20):
     processMatches(matches,m) # print out matches
 
 
-    ### preprocessing takes away magic of rolling hash
 
 
 if __name__ == '__main__':
@@ -68,21 +63,12 @@ if __name__ == '__main__':
 
   # this is the file with preprocessed hashed values of corpus text
   ins = open(hashedtxt, "r" )
-  hashedData = []
   start = time.time()
   for line in ins:
     # convert from string to list of tuples of form (lineNum, [hashed text])
     lineNum, sep, data = line.partition('[')
     hashedLine = [int(x) for x in data[:-2].split(", ")] # don't include ] \n in data
     full_search(hashedLine, pat)
-    #hashedData.append((int(lineNum), hashedLine)) # create list of these tuples
   ins.close()
 
-  # hashedData is now a list. each element represents a line
-
-  #q = 1079
-  #q2 = 1011
-
-
-  #full_search(hashedData, pat)
   print 'Time elapsed = ', time.time() - start

@@ -1,4 +1,5 @@
-reated on Sun Nov  3 10:43:06 2013
+"""
+Created on Sun Nov  3 10:43:06 2013
 
 Purpose: Preprocessing ONE text: Hash each word
   --Input: Text with line numbers

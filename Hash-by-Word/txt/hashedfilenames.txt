@@ -1,4 +1,2 @@
-../corpus/e1Hashed_4chunks.txt
-../corpus/e2Hashed_4chunks.txt
-../corpus/e3Hashed_4chunks.txt
-../corpus/e4Hashed_4chunks.txt
+txt/PrideAndPrejudiceHashed_20chunks.txt
+txt/english_smallerHashed_20chunks.txt

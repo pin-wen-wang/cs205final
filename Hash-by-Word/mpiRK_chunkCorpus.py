@@ -9,9 +9,7 @@ Input:
 
 Output: prints to screen the matches found
 
-To do:
---check matches to ensure that the hash found a true match.
---fix the incorrect output when pattern has repeated chunks
+Future:
 --make processMatches smarter so that it can append exisiting full chunks of texts rather than one word at a time
 
 """
@@ -42,9 +40,6 @@ def processData(hashedData, pat, m, rank, comm):
     pProcessed.append(new)
     pHashed.append(letsHash(new, q=1009, d=26))
 
-  #if rank == 0:
-   # print "Pattern length is ", len(pHashed), "words"
-    #print "Text length is", comm.Get_size()*len(hashedData), "words"
 
   # for each m-tuple in corpus
   for k,txtMtuple in enumerate(izip(*[iter(hashedData[i:]) for i in xrange(m)])):
@@ -60,7 +55,6 @@ def processData(hashedData, pat, m, rank, comm):
         if hashedWord != txtMtuple[j]:
           broken = j
           break
-
 
       if broken == m: # was not redefined
           matches.append((k,' '.join(pProcessed[i:i+m])))
@@ -127,8 +121,6 @@ if __name__ == '__main__':
 
   # convert from string to list of tuples of form (lineNum, [#...#])
   processNum, sep, data = mytxt.partition('[')
-  #print processNum, rank
-  #assert int(processNum) == rank # reason this breaks starting from k = 16???
 
   hashedLine = [int(x) for x in data[:-2].split(", ")] # don't include ] \n in data
 

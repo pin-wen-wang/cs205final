@@ -1,7 +1,7 @@
 """
 Master Slave Implementation For Distributing Text From Multiple Files in Corpus To Processes
 
-mpiexec -n 2 python MasterSlave_chunkMultCorpus.py hashedfilenames.txt multipattern.txt
+mpiexec -n 2 python MasterSlave_chunkMultCorpus.py hashedfilenames.txt multipattern50.txt
 
 Serially handles multiple texts
 """

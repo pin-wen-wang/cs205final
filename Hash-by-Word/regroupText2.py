@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
   m = int(m)
   K = int(Kstr)
-  intext = '../corpus/' + basename + '.txt'
+  intext = 'txt/' + basename + '.txt'
 
   F = open(intext)
   text=F.read()
@@ -37,8 +37,11 @@ if __name__ == '__main__':
   numWords = len(words)
   #ith process gets B[round(i*(n-m+1)/K):(round((i+1)*(n-m+1)/K)+m-1)]
 
-  textReshaped = '../corpus/' + basename + 'Reshaped_' + Kstr + 'chunks.txt'
-  hashedtext = '../corpus/' + basename + 'Hashed_'  + Kstr + 'chunks.txt'
+  # still in English. Input for MR job
+  textReshaped = 'txt/' + basename + 'Reshaped_' + Kstr + 'chunks.txt'
+
+  # Output for MR job. Will contain chunk number and hashed text
+  hashedtext = 'txt/' + basename + 'Hashed_'  + Kstr + 'chunks.txt'
 
   # carve/reshape text
   with open(textReshaped,'w') as fout:

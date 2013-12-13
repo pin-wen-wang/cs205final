@@ -10,10 +10,8 @@ problem: if pattern is match between half of 1st line and next line.
 """
 
 from mpi4py import MPI
-#from regroupText import grouper
 from MRhash import letsHash
 from mpiRK_chunkCorpus import processMatches
-#from collections import Counter
 from itertools import izip
 
 import sys
@@ -29,9 +27,6 @@ def master(hashedData, comm, q=1009):
 
   # corpus info
   clen = len(hashedData)
-
-  # pattern info
-  #plen = len(pat)
 
   size = comm.Get_size()
   status = MPI.Status()
@@ -102,8 +97,7 @@ def checkTxt(pHashed, pProcessed, txt, lineNum, m):
 
   # for each m-tuple in corpus
   for k,txtMtuple in enumerate(izip(*[iter(txt[i:]) for i in xrange(m)])):
-    #if k > 0: print k
-    #ptiny
+
     # for m-tuples in pattern -- might just use izip here
     for i in range(len(pHashed)-m+1): # first word in seqs
 
@@ -118,7 +112,6 @@ def checkTxt(pHashed, pProcessed, txt, lineNum, m):
 
 
       if broken == m: # was not redefined
-          #print (lineNum, k,' '.join(pProcessed[i:i+m]))
           matches.append((k,' '.join(pProcessed[i:i+m])))
 
   if len(matches) > 0:
@@ -181,7 +174,6 @@ if __name__ == '__main__':
   else:
     pHashed, pProcessed = hashPat(pat)
 
-    #if comm.Get_rank() == 1: print "Patten length ", len(pHashed)
     slave(pHashed, pProcessed, m, comm)
 
 

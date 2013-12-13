@@ -2,25 +2,7 @@
 """
 Created on Sun Nov 3 10:43:06 2013
 
-Purpose: Preprocessing ONE text: Hash each word - keep track of order by each word.
-  --Input: Text divided into K parts (K = num processes used in MPI)
-    to add line numbers on command line:
-      awk '{printf("%5d : %s\n", NR,$0)}' PrideAndPrejudice.txt > PPwithNum.txt
-      *check the new txt for weird things
-
-  --Output: (key,val) = (line number, ordered list of hashed words (numbers))
-
-
-Run MR job on command line:
-  python MRhash_word.py < PPwithNum.txt > letsdoPP.txt
-
-
-Further consideration:
-  --Empty lines (newline char?) get hash value of 0. Probs want to not hash these in first place
-
-  --Improv hashing function? Using prime number q = 1009
-
-  --I remove punc from text but leave numbers. should d = 26 + 10?
+Input is divided into K chunks. Hash them & return hashed text in order.
 
 """
 
@@ -32,7 +14,7 @@ from mrjob.job import MRJob
 
 # Hash function
 def letsHash(pat,q,d):
-    #print pat
+
     patlen = len(pat)
     hashpat = 0
 

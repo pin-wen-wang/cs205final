@@ -28,7 +28,7 @@ There are a number of approaches to parallelizing the Rabin-Karp algorithm that 
 
 * MapReduce (MRJob)
 * MPI (mpi4py)
-* Python (sys, string, numpy, itertools, pandas, subprocess)
+* Python (sys, string, numpy, itertools, pandas, subprocess, time, operator)
 
 
 ### Source Code: ###

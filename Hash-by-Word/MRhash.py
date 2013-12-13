@@ -1,6 +1,8 @@
 """
 Created on Sun Nov  3 10:43:06 2013
 
+** UPDATE 12/12/13: Obsolete code. Before I would add line numbers to texts like Pride and Prejudice, and this code takes such a text with line numbers as input. Now MRhash_word.py is used. The letsHash function defined here is the only reason I use this file. **
+
 Purpose: Preprocessing ONE text: Hash each word
   --Input: Text with line numbers
     to add line numbers on command line:
@@ -27,14 +29,11 @@ Further consideration:
 import operator, string
 from mrjob.job import MRJob
 
-q = 1009 # large prime number
-
-d = 26 # number of letters in alphabet
 
 
-# Hash function
-def letsHash(pat,q,d):
-    #print pat
+def letsHash(pat,q=1009,d=26):
+    """Hash function"""
+
     patlen = len(pat)
     hashpat = 0
 
@@ -69,12 +68,9 @@ class processText(MRJob):
         # to order hashed words in reducer, emit word position & line number
         for wordNum, word in enumerate(text.split(' ')):
 
-            # strip word of puncuation
-            #exclude = set(string.punctuation)
-            #word = ''.join(ch.upper() for ch in word if ch not in exclude)
             word = word.translate(string.maketrans("",""), string.punctuation).upper()
 
-            yield lineNum, [wordNum, letsHash(word, q, d)]
+            yield lineNum, [wordNum, letsHash(word)]
 
 
     def sortHashed_reducer(self, lineNum, values):

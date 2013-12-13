@@ -1,18 +1,7 @@
 """
 MPI where each process takes a portion of corpus (multiple texts) and searches for pattern throughout its chunk.
 
-Using the Parallel RK paper to divide up each text.
-
-Input:
---preprocessed corpus (1 text) that's been divided into K (= #processes) parts using MRhash_word.py
---pattern - just normal text
-
-Output: prints to screen the matches found
-
-To do:
---check matches to ensure that the hash found a true match.
---fix the incorrect output when pattern has repeated chunks
---make processMatches smarter so that it can append exisiting full chunks of texts rather than one word at a time
+Using the Parallel RK paper to divide up each text, handle multiple texts in serial
 
 """
 
@@ -41,7 +30,7 @@ def processData(hashedData, pat, m, rank, comm):
     new = word.translate(string.maketrans("",""), string.punctuation).upper()
     pProcessed.append(new)
     pHashed.append(letsHash(new, q=1009, d=26))
-  #print pHashed
+
 
   # for each m-tuple in corpus
   for k,txtMtuple in enumerate(izip(*[iter(hashedData[i:]) for i in xrange(m)])):
@@ -147,25 +136,8 @@ if __name__ == '__main__':
 
     hashedLine = [int(x) for x in data[:-2].split(", ")] # don't include ] \n in data
 
-    #start_time = MPI.Wtime()
+
     endTime = processData(hashedLine, pat, m, rank, comm)
-    #end_time = MPI.Wtime()
-    #print "Time: %f secs (process %d)" % ((end_time - start_time), rank)
     if rank == 0: print endTime - start # how to print latest time/last process's time?
 
 ####
-####
-"""
-  for txtChunk in izip(* [iter(hashedData[i:]) for i in xrange(m)] )):
-      for i,patChunk in enumerate(izip(* [iter(pat[i:]) for i in xrange(m)] ))):
-
-          breakpt = m # reset breakpt
-          for j in xrange(m):
-              if patChunk[j] != txtChunk[j]:
-                breakpt = j
-                break
-        if breakpt == m: # was not redefined
-          print 'Match found on line ',i
-          print txtChunk
-
-"""
