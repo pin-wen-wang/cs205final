@@ -53,8 +53,10 @@ Inside the directory `Hash-by-Char` you can run the serial and parallel code by 
 `Example: python RabinKarpSerial.py filenames.txt multipattern.txt`
 
 * RabinKarpParallel.py: parallel version that hashes in real time
-`Usage: mpiexec -n [# of processes] python RabinKarpParallel.py 
-	[file w/ corpus text names] [pattern text]`
+```
+ Usage: mpiexec -n [# of processes] python RabinKarpParallel.py 
+	[file w/ corpus text names] [pattern text]
+```
 `Example: mpiexec -n 20 python 
 	RabinKarpParallel.py filenames.txt multipattern.txt`
 
