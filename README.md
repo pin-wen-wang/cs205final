@@ -38,9 +38,11 @@ There are a number of approaches to parallelizing the Rabin-Karp algorithm that 
 * `mpirka.py`: single text MPI-send-recv parallel implementation of the Rabin-Karp algorithm
 * `RabinKarpEmbarParallel.py`: MPI-master-slave implementation of running the Rabin-Karp algorithm on a corpus of texts - embarassingly parallel method of sending each processor an entire source text file to run the Rabin-Karp algorithm
 * `MRhash_word.py`: Prehashes a source text by word using MapReduce and divides the hashed text into X chunks
-* `mpiRK_chunkCorpus.py`: single text parallel implementation of Rabin-Karp algorithm where each process searches for pattern in one chunk of prehashed corpus text.
-* `MasterSlave_chunkCorpus.py`: prehashed corpus (single text) is chunked into small pieces and dynamically distributed to slaves.
-* `MasterSlave_chunkMultCorpus.py`: prehashed corpus (multiple texts) is chunked into small pieces and dynamically distributed to slaves.
+* `MRhash.py`: Obsolete mapper/reducer. This file is used because a function defined in it (letsHash) is still relevant to other code.
+* `mpiRK_chunkCorpus.py`: [prehashed corpus] single text parallel implementation of Rabin-Karp algorithm where each process searches for pattern in one chunk of prehashed corpus text.
+* `mpiRK_chunkMultCorpus.py`: [prehashed corpus] multiple texts parallel implementation of Rabin-Karp algorithm where each process searches for pattern in one chunk of prehashed corpus texts.
+* `MasterSlave_chunkCorpus.py`: [prehashed corpus] single text is chunked into small pieces and dynamically distributed to slaves.
+* `MasterSlave_chunkMultCorpus.py`: [prehashed corpus] multiple texts are individually chunked into small pieces and dynamically distributed to slaves.
 * `regroupText2.py`: Reshapes text into K pieces and hashes text using MRhash_word.py, assuming m identical words=plagiarism [usage: python regroupText2.py Frankenstein K m]
 
 ### Usage: ###
@@ -52,7 +54,11 @@ Inside the directory `Hash-by-Char` you can run the serial and parallel code by 
 Inside the directory `Hash-by-Word` you can run the serial and parallel code by running the following:
 * `Usage: python prehashedSerialRK.py filenames.txt multipattern.txt`
 * `Usage: mpiexec -n [# of processes] python RabinKarpParallel.py filenames.txt multipattern.txt`
-<space><space>*<space> `Example: mpiexec -n 20 python MasterSlave_chunkCorpus.py txt/english_smallerHashed_2000chunks.txt multipattern50.txt`
+<space><space><space> `Example: mpiexec -n 20 python MasterSlave_chunkCorpus.py txt/english_smallerHashed_2000chunks.txt multipattern50.txt`
+
+* asdf
+** asdf
+  *** asdf
 
 ### Acknowledgements: ###
 * Louis Mullie: Project Mentor
