@@ -47,8 +47,13 @@ There are a number of approaches to parallelizing the Rabin-Karp algorithm that 
 
 ### Usage: ###
 Inside the directory `Hash-by-Char` you can run the serial and parallel code by running the following:
-* `Usage: python RabinKarpSerial.py filenames.txt multipattern.txt`
-* `Usage: mpiexec -n [# of processes] python RabinKarpParallel.py filenames.txt multipattern.txt`
+* RabinKarpSerial.py: serial version that hashes in real time
+`Usage: python RabinKarpSerial.py [file with corpus text names] [pattern text]`
+`Example: python RabinKarpSerial.py filenames.txt multipattern.txt`
+
+* RabinKarpParallel.py: parallel version that hashes in real time
+`Usage: mpiexec -n [# of processes] python RabinKarpParallel.py [file with corpus text names] [pattern text]`
+`Example: mpiexec -n [# of processes] python RabinKarpParallel.py filenames.txt multipattern.txt`
 
 
 Inside the directory `Hash-by-Word` you can run the serial and parallel code by running the following:
@@ -60,19 +65,21 @@ Inside the directory `Hash-by-Word` you can run the serial and parallel code by 
 `Usage: mpiexec -n [# of processes] python MasterSlave_chunkCorpus.py [text file hashed with regroupText2.py] [pattern file (unhashed)]`
 `Example: mpiexec -n 20 python MasterSlave_chunkCorpus.py txt/english_smallerHashed_2000chunks.txt multipattern50.txt`
 
-* MasterSlave_chunkMultCorpus.py: parallel version with master/slave framework using prehashed corpus with multiple texts (filenames)
+* MasterSlave_chunkMultCorpus.py: master/slave framework using prehashed corpus with multiple texts (filenames)
 `Usage: mpiexec -n [# of processes] python MasterSlave_chunkMultCorpus.py [file with list of hashed files] [pattern file (unhashed)]`
 `Example: mpiexec -n 20 python MasterSlave_chunkMultCorpus.py txt/hashedfilenames.txt multipattern50.txt`
 
-* mpiRK_chunkCorpus.py: parallel version with #chunks of corpus = #processes, using prehashed corpus
+* mpiRK_chunkCorpus.py: mpi parallel version with #chunks of corpus = #processes, using prehashed corpus
 `Usage: mpiexec -n [# of processes] python mpiRK_chunkCorpus.py [text file hashed with regroupText2.py] [pattern file (unhashed)]`
 `Example: mpiexec -n 20 python mpiRK_chunkCorpus.py txt/english_smallerHashed_20chunks.txt multipattern50.txt`
 
-* mpiRK_chunkMultCorpus.py: parallel version with master/slave framework using prehashed corpus with multiple texts (filenames)
+* mpiRK_chunkMultCorpus.py: mpi with #chunks of corpus with  multiple texts (filenames)
 `Usage: mpiexec -n [# of processes] python mpiRK_chunkMultCorpus.py [file with list of hashed files] [pattern file (unhashed)]`
 `Example: mpiexec -n 20 python mpiRK_chunkMultCorpus.py txt/hashedfilenames.txt multipattern50.txt`
 
-
+* `regroupText2.py`: reshape and hash corpus text. text must be in txt folder.
+`Usage: python regroupText2.py [filename without '.txt'] [number of chunks] [number of words constituting plagiarism]`
+`Example: python regroupText2.py PrideAndPrejudice 20 20`
 
 
 
