@@ -44,7 +44,7 @@ The above packages should already be installed on the resonance.seas cluster for
 * `mpiRK_chunkMultCorpus.py`: [prehashed corpus] multiple texts parallel implementation of Rabin-Karp algorithm where each process searches for pattern in one chunk of prehashed corpus texts.
 * `MasterSlave_chunkCorpus.py`: [prehashed corpus] single text is chunked into small pieces and dynamically distributed to slaves.
 * `MasterSlave_chunkMultCorpus.py`: [prehashed corpus] multiple texts are individually chunked into small pieces and dynamically distributed to slaves.
-* `regroupText2.py`: Reshapes text into K pieces and hashes text using MRhash\_word.py, assuming m identical words=plagiarism. Note: makes a command line call. Example: python regroupText2.py PrideAndPrejudice 20 20
+* `regroupText2.py`: Reshapes text into K pieces and hashes text using MRhash\_word.py, assuming m identical words=plagiarism. Note: makes a command line call.
 
 ### Usage: ###
 Inside the directory `Hash-by-Char` you can run the serial and parallel code by running the following:
@@ -56,7 +56,7 @@ Example: python RabinKarpSerial.py filenames.txt multipattern.txt
 
 * RabinKarpParallel.py: parallel version that hashes in real time
 ```
- Usage: mpiexec -n [# of processes] python RabinKarpParallel.py [file w/ corpus text names] [pattern text]
+Usage: mpiexec -n [# of processes] python RabinKarpParallel.py [file w/ corpus text names] [pattern text]
 
 Example: mpiexec -n 20 python RabinKarpParallel.py filenames.txt multipattern.txt
 ```
