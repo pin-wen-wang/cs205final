@@ -56,9 +56,9 @@ Inside the directory `Hash-by-Word` you can run the serial and parallel code by 
 * `Usage: mpiexec -n [# of processes] python RabinKarpParallel.py filenames.txt multipattern.txt`
 <space><space><space> `Example: mpiexec -n 20 python MasterSlave_chunkCorpus.py txt/english_smallerHashed_2000chunks.txt multipattern50.txt`
 
-* asdf
-** asdf
-  *** asdf
+asdf
+  adf
+    adsf
 
 ### Acknowledgements: ###
 * Louis Mullie: Project Mentor
