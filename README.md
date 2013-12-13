@@ -49,8 +49,10 @@ The above packages should already be installed on the resonance.seas cluster for
 ### Usage: ###
 Inside the directory `Hash-by-Char` you can run the serial and parallel code by running the following:
 * RabinKarpSerial.py: serial version that hashes in real time
-`Usage: python RabinKarpSerial.py [file w/ corpus text names] [pattern text]`
-`Example: python RabinKarpSerial.py filenames.txt multipattern.txt`
+```
+Usage: python RabinKarpSerial.py [file w/ corpus text names] [pattern text]
+Example: python RabinKarpSerial.py filenames.txt multipattern.txt
+```
 
 * RabinKarpParallel.py: parallel version that hashes in real time
 ```
