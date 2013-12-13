@@ -59,7 +59,6 @@ Example: python RabinKarpSerial.py filenames.txt multipattern.txt
 
 ```
 Usage: mpiexec -n [# of processes] python RabinKarpParallel.py [file w/ corpus text names] [pattern text]
-
 Example: mpiexec -n 20 python RabinKarpParallel.py filenames.txt multipattern.txt
 ```
 
@@ -68,7 +67,7 @@ Inside the directory `Hash-by-Word` you can run the serial and parallel code by 
 
 ```
 Usage: python prehashedSerialRK.py [text file hashed w/ regroupText2.py] [pattern file (unhashed)]
-Example: python prehashedSerialRK.py txt/english\_smallerHashed\_2000chunks.txt multipattern50.txt
+Example: python prehashedSerialRK.py txt/english_smallerHashed_2000chunks.txt multipattern50.txt
 ```
 
 * MasterSlave\_chunkCorpus.py: parallel version w/ master/slave framework using prehashed corpus
